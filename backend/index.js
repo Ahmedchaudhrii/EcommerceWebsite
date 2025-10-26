@@ -3,35 +3,42 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 
+import connectDB from "./config/db.js";
 import productRoutes from "./routes/productRoutes.js";
+import uploadRoutes from "./routes/upload.js";
 
-app.use("/api/products", productRoutes);
-
-
+// ✅ Load environment variables
 dotenv.config();
 
+// ✅ Create Express app
 const app = express();
-app.use(cors());
+
+// ✅ Middleware
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 
-app.get("/",(req,res)=>{
-    res.json([
+// ✅ Routes
+app.use("/api/products", productRoutes);
+app.use("/api/upload", uploadRoutes);
 
+// ✅ Test route
+app.get("/", (req, res) => {
+  res.json([
     { id: 1, name: "T-shirt", price: 20 },
     { id: 2, name: "Shoes", price: 50 },
-    { id: 3, name: "Watch", price: 100 }
-
-    ])
-
+    { id: 3, name: "Watch", price: 100 },
+  ]);
 });
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("✅ MongoDB Connected"))
-.catch((err) => console.error(err));
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+// ✅ Connect to MongoDB and start server
+(async () => {
+  try {
+    await connectDB();
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () =>
+      console.log(`🚀 Server running on http://localhost:${PORT}`)
+    );
+  } catch (err) {
+    console.error("❌ Failed to start server:", err.message);
+  }
+})();

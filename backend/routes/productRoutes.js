@@ -1,28 +1,27 @@
 import express from "express";
-import Product from "./models/Product.js";
+import {
+  getAllProducts,
+  createProduct,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+} from "../controllers/productController.js";
 
 const router = express.Router();
 
-// Get all products
-router.get("/", async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  
-  }
-});
+// GET /api/products → fetch all products
+router.get("/", getAllProducts);
 
-// Add a new product (for testing)
-router.post("/", async (req, res) => {
-  try {
-    const newProduct = new Product(req.body);
-    await newProduct.save();
-    res.status(201).json(newProduct);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+// POST /api/products → add a new product
+router.post("/", createProduct);
+
+// GET /api/products/:id → fetch single product
+router.get("/:id", getProductById);
+
+// PUT /api/products/:id → update product
+router.put("/:id", updateProduct);
+
+// DELETE /api/products/:id → delete product
+router.delete("/:id", deleteProduct);
 
 export default router;

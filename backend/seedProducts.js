@@ -1,7 +1,11 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Product from "../models/Product.js";
-dotenv.config();
+import connectDB from "./config/db.js";
+import mongoose from "mongoose";
+import Product from "./models/Product.js";
+
+dotenv.config(); // Load environment variables
+
+await  connectDB();     // Connect to MongoDB
 
 const products = [
   {
@@ -27,20 +31,21 @@ const products = [
   }
 ];
 
-async function seed() {
+const seedProducts = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("✅ MongoDB Connected");
     await Product.deleteMany();
     console.log("🧹 Old products removed");
+
     await Product.insertMany(products);
     console.log("🌱 Dummy products added!");
-  } catch (err) {
-    console.error("❌ Seed error:", err);
-  } finally {
-    await mongoose.disconnect();
-    console.log("🔌 Connection closed");
-  }
-}
 
-seed();
+    process.exit(); // Exit script successfully
+  } catch (err) {
+    console.error("❌ Seeding failed:", err);
+    process.exit(1); // Exit with error
+  }
+};
+
+seedProducts();
