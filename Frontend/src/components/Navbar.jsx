@@ -1,9 +1,13 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false); // ✅ profile dropdown state
+  const [profileOpen, setProfileOpen] = useState(false);
+  const isAdmin = localStorage.getItem("adminToken");
+
+  const linkStyle = "text-gray-700 hover:text-blue-600";
+  const activeStyle = "text-blue-600 font-semibold";
 
   return (
     <nav className="bg-white shadow-md">
@@ -22,10 +26,13 @@ function Navbar() {
 
           {/* Links (Desktop) */}
           <div className="hidden space-x-6 md:flex">
-            <Link to="/" className="text-gray-700 hover:text-blue-600">Home</Link>
-            <Link to="/products" className="text-gray-700 hover:text-blue-600">Shop</Link>
-            <Link to="/about" className="text-gray-700 hover:text-blue-600">About</Link>
-            <Link to="/contact" className="text-gray-700 hover:text-blue-600">Contact</Link>
+            <NavLink to="/" className={({ isActive }) => isActive ? activeStyle : linkStyle}>Home</NavLink>
+            <NavLink to="/products" className={({ isActive }) => isActive ? activeStyle : linkStyle}>Products</NavLink>
+            <NavLink to="/about" className={({ isActive }) => isActive ? activeStyle : linkStyle}>About</NavLink>
+            <NavLink to="/contact" className={({ isActive }) => isActive ? activeStyle : linkStyle}>Contact</NavLink>
+            {isAdmin && (
+              <NavLink to="/admin" className={({ isActive }) => isActive ? activeStyle : linkStyle}>Admin</NavLink>
+            )}
           </div>
 
           {/* Icons */}
@@ -72,12 +79,15 @@ function Navbar() {
       {/* Mobile Menu Dropdown */}
       {isOpen && (
         <div className="px-4 pt-2 pb-4 space-y-2 bg-white shadow md:hidden">
-          <Link to="/" className="block text-gray-700 hover:text-blue-600">Home</Link>
-          <Link to="/products" className="block text-gray-700 hover:text-blue-600">Shop</Link>
-          <Link to="/about" className="block text-gray-700 hover:text-blue-600">About</Link>
-          <Link to="/contact" className="block text-gray-700 hover:text-blue-600">Contact</Link>
-          <Link to="/cart" className="block text-gray-700 hover:text-blue-600">Cart</Link>
-          <Link to="/login" className="block text-gray-700 hover:text-blue-600">Login</Link>
+          <NavLink to="/" className={({ isActive }) => isActive ? activeStyle : linkStyle}>Home</NavLink>
+          <NavLink to="/products" className={({ isActive }) => isActive ? activeStyle : linkStyle}>Products</NavLink>
+          <NavLink to="/about" className={({ isActive }) => isActive ? activeStyle : linkStyle}>About</NavLink>
+          <NavLink to="/contact" className={({ isActive }) => isActive ? activeStyle : linkStyle}>Contact</NavLink>
+          <NavLink to="/cart" className={({ isActive }) => isActive ? activeStyle : linkStyle}>Cart</NavLink>
+          <NavLink to="/login" className={({ isActive }) => isActive ? activeStyle : linkStyle}>Login</NavLink>
+          {isAdmin && (
+            <NavLink to="/admin" className={({ isActive }) => isActive ? activeStyle : linkStyle}>Admin</NavLink>
+          )}
         </div>
       )}
     </nav>

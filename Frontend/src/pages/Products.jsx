@@ -1,71 +1,50 @@
-// src/pages/Products.jsx
-import React,{useEffect,useState} from "react";
-import ProductCard from "../components/ProductCard";
-// import { data } from "autoprefixer";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import ProductWrapper from "../components/ProductWrapper";
 
 function Products() {
-  const [product,setProduct] = useState([])
-  const [loading,setLoading] = useState(true)
-  const [error,setError] = useState(null)
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await axios.get("/api/products");
+        setProducts(data);
+      } catch (err) {
+        console.error("Error fetching products:", err.message);
+        setError("Failed to load products");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  app.get ("",(req,res)=>{
-    res.json([
-    { id: 1, name: "Classic White Shirt", price: "$25", image: "Masafir/public/pictures/Catalogue/3/IMG_4675.JPG" },
-    { id: 2, name: "Casual Blue Shirt", price: "$30", image: "Masafir/public/pictures/Catalogue/2/IMG_4606.JPG" },
-    { id: 3, name: "Formal Black Shirt", price: "$35", image: "/Masafir/public/pictures/Catalogue/1/IMG_4592.JPG" },
-    ])
-  })
+    fetchProducts();
+  }, []);
 
- useEffect( () => {
-  fetch("http://localhost:5000/api/products")
-  .then( (res)=>{
-    if (!res.ok) {
-      throw new Error("Failed to fetch products");
-      
-    } return  res.json();
-  })
-  
-  .then( (data) =>{
-    setProduct(data)
-    setLoading(false)
-  })
-  .catch ( (err) => {
-    console.error(err);
-    setError(err.message);
-    setLoading(false);
-  })
-  
- },[])
-  
   if (loading) {
-    return <p className="text-center">Loading products...</p>;
+    return <p className="py-10 text-center text-gray-600">Loading products...</p>;
   }
 
   if (error) {
-    return <p className="text-center text-red-500">Error: {error}</p>;
+    return <p className="py-10 text-center text-red-500">Error: {error}</p>;
   }
 
+return (
+  <section className="px-6 py-12 md:px-12 bg-gray-50">
+    <h2 className="mb-8 text-3xl font-bold text-center text-gray-800">
+      All Products
+    </h2>
 
+    <div className="grid max-w-6xl grid-cols-1 gap-8 mx-auto sm:grid-cols-2 md:grid-cols-3">
+      {products.map((product) => (
+        <ProductWrapper key={product._id || product.id} product={product} />
+      ))}
+    </div>
+  </section>
+);
 
-  return (
-    <section className="px-6 py-12 md:px-12 bg-gray-50">
-      <h2 className="mb-8 text-3xl font-bold text-center text-gray-800">
-        Our Products
-      </h2>
-      
-      <div className="grid max-w-6xl grid-cols-1 gap-8 mx-auto sm:grid-cols-2 md:grid-cols-3">
-        {products.map((product) => (
-          <ProductCard 
-            key={product._id || product.id} 
-            name={product.name} 
-            price={product.price} 
-            image={product.image} 
-          />
-        ))}
-      </div>
-    </section>
-  );
 }
 
 export default Products;
